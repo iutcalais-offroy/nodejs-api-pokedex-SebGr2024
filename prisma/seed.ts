@@ -21,10 +21,10 @@ function getRandomCards(items: CardModel[], count: number): CardModel[] {
 async function main() {
     console.log("🌱 Starting database seed...");
 
+    await prisma.deckCard.deleteMany();
+    await prisma.deck.deleteMany();
     await prisma.card.deleteMany();
     await prisma.user.deleteMany();
-    await prisma.deck.deleteMany();
-    await prisma.deckCard.deleteMany();
 
     const hashedPassword = await bcrypt.hash("password123", 10);
 
@@ -75,25 +75,25 @@ async function main() {
 
     const users = [redUser, blueUser];
 
-    for (const user of users) {
-        const deck = await prisma.deck.create({
-            data: {
-                name: "Starter Deck",
-                userId: user.id,
-            },
-        });
+for (const user of users) {
+    const deck = await prisma.deck.create({
+        data: {
+            name: "Starter Deck " + user.username,
+            userId: user.id,
+        },
+    });
 
-        const randomCards = getRandomCards(pokemonData, 10);
+    const randomCards = getRandomCards(createdCards, 10);
 
-        await prisma.deckCard.createMany({
-            data: randomCards.map((card) => ({
-                deckId: deck.id,
-                cardId: Number(card.id),
-            })),
-        });
+    await prisma.deckCard.createMany({
+        data: randomCards.map((card) => ({
+            deckId: deck.id,
+            cardId: Number(card.id), 
+        })),
+    });
 
-        console.log(`🃏 Starter Deck crée pour ${user.username}`);
-    }
+    console.log(`✅ Starter Deck créé pour ${user.username}`);
+}
 
 
     console.log("\n🎉 Database seeding completed!");
