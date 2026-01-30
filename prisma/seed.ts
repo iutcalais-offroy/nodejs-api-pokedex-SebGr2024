@@ -88,7 +88,7 @@ async function main() {
         await prisma.deckCard.createMany({
             data: randomCards.map((card) => ({
                 deckId: deck.id,
-                cardId: card.id,
+                cardId: Number(card.id),
             })),
         });
 
