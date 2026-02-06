@@ -17,8 +17,8 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/auth", Routes);
-app.use("/Cards", RoutesCards);
+app.use("/api/auth", Routes);
+app.use("/api/cards", RoutesCards);
 
 // Serve static files (Socket.io test client)
 app.use(express.static('public'));
