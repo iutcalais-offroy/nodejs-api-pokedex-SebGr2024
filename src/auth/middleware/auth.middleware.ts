@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response} from 'express'
 import jwt from 'jsonwebtoken'
+import {env} from "../../env";
+
 
 declare global {
     namespace Express {
@@ -9,21 +11,30 @@ declare global {
     }
 }
 
+export interface AuthRequest extends Request {
+  user?: {
+    userId: number;
+    email: string;
+  };
+}
+
 export const authenticateToken = (
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction,
-) => {
+):void => {
 
     const authHeader = req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1]
 
     if (!token) {
-        return res.status(401).json({error: 'Token manquant'})
+        
+        res.status(401).json({error: 'Token manquant'})
+        return;
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+        const decoded = jwt.verify(token, env.JWT_SECRET as string) as {
             userId: number
             email: string
         }
@@ -32,6 +43,7 @@ export const authenticateToken = (
 
         next()
     } catch (error) {
-        return res.status(401).json({error: 'Token invalide ou expiré'})
+        res.status(401).json({error: 'Token invalide ou expiré'})
+        return;
     }
 }
