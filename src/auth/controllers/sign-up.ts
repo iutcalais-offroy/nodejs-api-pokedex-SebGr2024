@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma } from "./prisma"; // adapte selon ton ORM
+import { prisma } from "./../../database"; 
 
 export const signUp = async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body;
 
+      if (!email || !username || !password) {
+      return res.status(400).json({
+        message: "Email, username et password sont nécessaire",
+      })
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -23,9 +28,9 @@ export const signUp = async (req: Request, res: Response) => {
     const user = await prisma.user.create({
         data: {email,username, password: hashedPassword},
         select: {
-            email,
-            username,
-            password: hashedPassword
+            email: true,
+            username: true,
+            password: true
                 
         },
     })
@@ -37,7 +42,7 @@ export const signUp = async (req: Request, res: Response) => {
 
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userUsername: user.username, email: user.email },
       process.env.JWT_SECRET as string,
       { expiresIn: "7d" }
     );
@@ -45,9 +50,8 @@ export const signUp = async (req: Request, res: Response) => {
     return res.status(201).json({
       token,
       user: {
-        id: user.id,
-        email: user.email,
         username: user.username,
+        email: user.email,
       },
     });
   } catch (error) {

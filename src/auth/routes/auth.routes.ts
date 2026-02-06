@@ -1,5 +1,5 @@
 import express from "express";
-import { signUp } from "./controllers/sign-up"; // adapte le chemin
+import { signUp } from "../controllers/sign-up";
 
 const router = express.Router();
 
