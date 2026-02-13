@@ -1,8 +1,8 @@
-import express from "express";
-import { getCards } from "../controllers/cards.controller";
+import express from 'express'
+import { getCards } from '../controllers/cards.controller'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/", getCards);
+router.get('/', getCards)
 
-export default router;
+export default router

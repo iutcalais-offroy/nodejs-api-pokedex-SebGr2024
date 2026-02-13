@@ -1,49 +1,46 @@
-import {NextFunction, Request, Response} from 'express'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import {env} from "../../env";
-
+import { env } from '../../env'
 
 declare global {
-    namespace Express {
-        interface Request {
-            userId?: number
-        }
+  namespace Express {
+    interface Request {
+      userId?: number
     }
+  }
 }
 
 export interface AuthRequest extends Request {
   user?: {
-    userId: number;
-    email: string;
-  };
+    userId: number
+    email: string
+  }
 }
 
 export const authenticateToken = (
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction,
-):void => {
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const authHeader = req.headers.authorization
+  const token = authHeader && authHeader.split(' ')[1]
 
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1]
+  if (!token) {
+    res.status(401).json({ error: 'Token manquant' })
+    return
+  }
 
-    if (!token) {
-        
-        res.status(401).json({error: 'Token manquant'})
-        return;
+  try {
+    const decoded = jwt.verify(token, env.JWT_SECRET as string) as {
+      userId: number
+      email: string
     }
 
-    try {
-        const decoded = jwt.verify(token, env.JWT_SECRET as string) as {
-            userId: number
-            email: string
-        }
+    req.userId = decoded.userId
 
-        req.userId = decoded.userId
-
-        next()
-    } catch (error) {
-        res.status(401).json({error: 'Token invalide ou expiré'})
-        return;
-    }
+    next()
+  } catch {
+    res.status(401).json({ error: 'Token invalide ou expiré' })
+    return
+  }
 }
