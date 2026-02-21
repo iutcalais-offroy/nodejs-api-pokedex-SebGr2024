@@ -47,3 +47,14 @@ export const findDecksByUserId = async (userId: number) => {
     },
   })
 }
+
+export const findDeckById = async (deckId: number) => {
+  return prisma.deck.findUnique({
+    where: { id: deckId },
+    include: {
+      cards: {
+        include: { card: true },
+      },
+    },
+  })
+}

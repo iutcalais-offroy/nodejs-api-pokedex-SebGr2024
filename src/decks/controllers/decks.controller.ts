@@ -31,3 +31,30 @@ export const getDecks = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+export const getDeckById = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.userId) {
+      return res.status(401).json({ message: 'Pas de token' })
+    }
+
+    const deckId = Number(req.params.id)
+
+    if (!Number.isInteger(deckId) || deckId <= 0) {
+      return res.status(404).json({ message: 'Deck introuvable ID inexistant' })
+    }
+    const deck = await deckService.getDeckById(deckId)
+
+    if (!deck) {
+      return res.status(404).json({ message: 'Deck introuvable' })
+    }
+
+    if (deck.userId !== req.user?.userId) {
+      return res.status(403).json({ message: 'Accès interdit' })
+    }
+
+    return res.status(200).json(deck)
+  } catch {
+    return res.status(500).json({ message: 'Erreur serveur' })
+  }
+}

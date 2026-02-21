@@ -37,3 +37,7 @@ export const createDeck = async (
 export const getDecksByUserId = async (userId: number) => {
   return deckRepository.findDecksByUserId(userId)
 }
+
+export const getDeckById = async (deckId: number) => {
+  return deckRepository.findDeckById(deckId)
+}
