@@ -5,25 +5,21 @@ import { env } from '../../env'
 declare global {
   namespace Express {
     interface Request {
-      userId?: number
+      user?: {
+        userId: number
+        email: string
+      }
     }
   }
 }
 
-export interface AuthRequest extends Request {
-  user?: {
-    userId: number
-    email: string
-  }
-}
-
 export const authenticateToken = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): void => {
   const authHeader = req.headers.authorization
-  const token = authHeader && authHeader.split(' ')[1]
+  const token = authHeader?.split(' ')[1]
 
   if (!token) {
     res.status(401).json({ error: 'Token manquant' })
@@ -36,11 +32,13 @@ export const authenticateToken = (
       email: string
     }
 
-    req.userId = decoded.userId
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+    }
 
     next()
   } catch {
     res.status(401).json({ error: 'Token invalide ou expiré' })
-    return
   }
 }
