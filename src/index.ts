@@ -4,6 +4,7 @@ import express from 'express'
 import cors from 'cors'
 import Routes from './auth/routes/auth.routes'
 import RoutesCards from './Cards/routes/cards.route'
+import RoutesDecks from './decks/routes/decks.route'
 
 // Create Express app
 export const app = express()
@@ -19,6 +20,7 @@ app.use(
 app.use(express.json())
 app.use('/api/auth', Routes)
 app.use('/api/cards', RoutesCards)
+app.use('/api/decks', RoutesDecks)
 
 // Serve static files (Socket.io test client)
 app.use(express.static('public'))
