@@ -58,3 +58,22 @@ export const findDeckById = async (deckId: number) => {
     },
   })
 }
+
+export const deleteDeckCards = async (deckId: number) => {
+  return prisma.deckCard.deleteMany({
+    where: { deckId },
+  })
+}
+
+export const addDeckCards = async (deckId: number, cards: number[]) => {
+  return prisma.deckCard.createMany({
+    data: cards.map((cardId) => ({ deckId, cardId })),
+  })
+}
+
+export const patchDeckName = async (deckId: number, name: string) => {
+  return prisma.deck.update({
+    where: { id: deckId },
+    data: { name },
+  })
+}
