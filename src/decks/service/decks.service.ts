@@ -33,3 +33,7 @@ export const createDeck = async (
     existingCards.map((c) => c.id),
   )
 }
+
+export const getDecksByUserId = async (userId: number) => {
+  return deckRepository.findDecksByUserId(userId)
+}

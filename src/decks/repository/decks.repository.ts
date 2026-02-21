@@ -36,3 +36,14 @@ export const createDeck = async (
     },
   })
 }
+
+export const findDecksByUserId = async (userId: number) => {
+  return prisma.deck.findMany({
+    where: { userId },
+    include: {
+      cards: {
+        include: { card: true },
+      },
+    },
+  })
+}

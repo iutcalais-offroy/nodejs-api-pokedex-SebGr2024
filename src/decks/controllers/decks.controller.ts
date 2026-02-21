@@ -17,3 +17,17 @@ export const createDeck = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+export const getDecks = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.userId) {
+      return res.status(401).json({ message: 'Pas de token' })
+    }
+
+    const decks = await deckService.getDecksByUserId(req.user?.userId)
+
+    return res.status(200).json(decks)
+  } catch {
+    return res.status(500).json({ message: 'Erreur serveur' })
+  }
+}
