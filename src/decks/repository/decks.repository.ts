@@ -77,3 +77,9 @@ export const patchDeckName = async (deckId: number, name: string) => {
     data: { name },
   })
 }
+
+export const deleteDeck = async (deckId: number) => {
+  return prisma.deck.delete({
+    where: { id: deckId },
+  })
+}

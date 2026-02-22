@@ -82,3 +82,19 @@ export const patchDeck = async (
 
   return deckRepository.findDeckById(deckId)
 }
+
+export const deleteDeck = async (deckId: number, userId: number) => {
+  const deck = await deckRepository.findDeckById(deckId)
+
+  if (!deck) {
+    throw { statusCode: 404, message: 'Deck introuvable' }
+  }
+
+  if (deck.userId !== userId) {
+    throw { statusCode: 403, message: 'Accès interdit' }
+  }
+
+  await deckRepository.deleteDeckCards(deckId)
+
+  await deckRepository.deleteDeck(deckId)
+}

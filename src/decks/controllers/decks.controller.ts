@@ -111,3 +111,33 @@ export const patchDeck = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+export const deleteDeck = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.userId) {
+      return res.status(401).json({ message: 'Pas de token' })
+    }
+
+    const deckId = Number(req.params.id)
+
+    if (!Number.isInteger(deckId) || deckId <= 0) {
+      return res.status(404).json({ message: 'ID invalide' })
+    }
+
+    await deckService.deleteDeck(deckId, req.user.userId)
+
+    return res.status(200).json({ message: 'Deck supprimé avec succès' })
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'statusCode' in error &&
+      'message' in error
+    ) {
+      const erreur = error as { statusCode: number; message: string }
+      return res.status(erreur.statusCode).json({ message: erreur.message })
+    }
+
+    return res.status(500).json({ message: 'Erreur serveur' })
+  }
+}
