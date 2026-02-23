@@ -1,14 +1,14 @@
 import { mockDeep, mockReset, DeepMockProxy } from 'vitest-mock-extended'
 import { vi, beforeEach } from 'vitest'
 import { PrismaClient } from '../src/generated/prisma/client'
-import { prisma } from '../src/database'
+
+export const prismaMock =
+  mockDeep<PrismaClient>() as unknown as DeepMockProxy<PrismaClient>
 
 vi.mock('../src/database', () => ({
-  prisma: mockDeep<PrismaClient>(),
+  prisma: prismaMock,
 }))
 
 beforeEach(() => {
   mockReset(prismaMock)
 })
-
-export const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>
