@@ -1,6 +1,26 @@
 import { Request, Response } from 'express'
 import * as deckService from '../service/decks.service'
 
+/**
+ * Crée un deck pour l'utilisateur connecté.
+ *
+ * @route POST api/decks
+ *
+ * @async
+ * @param {Request } req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ *
+ * @param {number} req.user.userId Identifiant de l'utilisateur connecté
+ * @param {CreateDeck} req.body Données du deck à créer
+ *
+ * @returns {Promise<Response>} Retourne le deck créé avec un statut 201
+ *
+ * @throws {400} Si les données sont invalides
+ * @throws {401} Si aucun token n'est fourni
+ * @throws {500} On renvoie erreur serveur
+ */
+
 export const createDeck = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId
@@ -24,6 +44,25 @@ export const createDeck = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ *Avoir le deck de l'utilisateur connecté
+ *
+ * @route GET api/decks/mine
+ *
+ * @async
+ * @param {Request} req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ *
+ * @param {number} req.user.userId Identifiant de l'utilisateur connecté
+ *
+ * @returns {Promise<Response>} Retourne le deck créé avec un statut 200
+ *
+ *
+ * @throws {401} Si aucun token n'est fourni
+ * @throws {500} On renvoie erreur serveur
+ */
+
 export const getDecks = async (req: Request, res: Response) => {
   try {
     if (!req.user?.userId) {
@@ -37,6 +76,26 @@ export const getDecks = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+/**
+ *Avoir le deck grâce à l'id du deck
+ *
+ * @route GET api/decks/:id
+ *
+ * @async
+ * @param {Request} req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ * @param {number} req.user.userId Identifiant de l'utilisateur connecté
+ * @param {number} req.params.id Id du deck à modifier
+ *
+ * @returns {Promise<Response>} Retourne le deck créé avec un statut 200
+ *
+ * @throws {401} Si aucun token n'est fourni
+ * @throws {404} Si l'identifiant est invalide ou si le deck est introuvable
+ * @throws {403} si on ne peut pas accéder au deck
+ * @throws {500} On renvoie erreur serveur
+ */
 
 export const getDeckById = async (req: Request, res: Response) => {
   try {
@@ -64,6 +123,28 @@ export const getDeckById = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+/**
+ * Mettre à jour les données d'un deck
+ *
+ * @route PATCH api/decks/:id
+ *
+ * @async
+ * @param {Request} req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ *
+ * @param {number} req.user.userId Identifiant de l'utilisateur connecté
+ * @param {PatchDeck} req.body Données du deck à modifier
+ * @param {number} req.params.id Id du deck à modifier
+ *
+ * @returns {Promise<Response>} Retourne le deck modifier avec un statut 200
+ *
+ * @throws {401} Si aucun token n'est fourni
+ * @throws {404} Si l'identifiant est invalide ou si le deck est introuvable
+ * @throws {403} Si l'accès est interdit pour l'utilisateur
+ * @throws {500} On renvoie erreur serveur
+ */
 
 export const patchDeck = async (req: Request, res: Response) => {
   try {
@@ -111,6 +192,26 @@ export const patchDeck = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Erreur serveur' })
   }
 }
+
+/**
+ * Supprime le deck choisi avec l'id.
+ *
+ * @route DELETE api/decks/:id
+ *
+ * @async
+ * @param {Request} req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ *
+ * @param {number} req.user.userId Identifiant de l'utilisateur connecté
+ * @param {number} req.params.id Id du deck à supprimer
+ *
+ * @returns {Promise<Response>} Pour nous dire que le deck est supprimer avec un code 200
+ *
+ * @throws {401} Si aucun token n'est fourni
+ * @throws {404} Si l'identifiant est invalide
+ * @throws {500} On renvoie erreur serveur
+ */
 
 export const deleteDeck = async (req: Request, res: Response) => {
   try {
