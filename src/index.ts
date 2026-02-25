@@ -13,6 +13,10 @@ import jwt from 'jsonwebtoken'
 // Create Express app
 export const app = express()
 
+interface UserPayload {
+  userId: number
+  email: string
+}
 // Middlewares
 app.use(
   cors({
@@ -57,11 +61,15 @@ if (require.main === module) {
     const token = socket.handshake.auth.token
     if (!token) return next(new Error('Unauthorized: Token manquant'))
 
+    const secret = env.JWT_SECRET || process.env.JWT_SECRET
+
+    if (!secret) {
+      return next(new Error('Server Error: JWT_SECRET manquant'))
+    }
+
     try {
-      const payload = jwt.verify(token, process.env.JWT_SECRET) as {
-        userId: number
-        email: string
-      }
+      const payload = jwt.verify(token, secret) as unknown as UserPayload
+
       socket.data.userId = payload.userId
       socket.data.email = payload.email
       next()
@@ -69,11 +77,6 @@ if (require.main === module) {
       next(new Error('Unauthorized: Token invalide'))
     }
   })
-
-  io.on('connection', (socket) => {
-    console.log('Nouvelle connexion:', socket.id, 'userId:', socket.data.userId)
-  })
-
   // Start server
   try {
     httpServer.listen(env.PORT, () => {
