@@ -3,6 +3,25 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from './../../database'
 
+/**
+ * S'inscrire (se crée un compte) en tant qu'utilisateur
+ *
+ * @route POST api/auth/sign-up
+ *
+ * @async
+ * @param {Request} req Requête Express
+ * @param {Response} res Réponse Express
+ *
+ *
+ * @param {SignUp} req.body Données à rentrer pour se crée un compte
+ *
+ * @returns {Promise<Response>} Pour nous dire que l'utilisateur est crée avec un code 201 avec son token qu'il faudra tout le temps saisir
+ *
+ * @throws {400} Si aucun email, mot de passe et username n'est saisie
+ * @throws {409} Si l'email est déjà utilisé
+ * @throws {500} On renvoie erreur serveur
+ */
+
 export const signUp = async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body

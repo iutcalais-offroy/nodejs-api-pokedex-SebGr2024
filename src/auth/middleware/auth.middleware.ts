@@ -12,6 +12,25 @@ declare global {
     }
   }
 }
+/**
+ *
+ * Vérifie la présence et la validité d’un token JWT dans l’en-tête
+ * Authorization de la requête HTTP (format attendu : "Bearer <token>").
+ *
+ * Si le token est valide :
+ * Les informations décodées (userId, email) sont ajoutées à l'objet req.user
+ * Le middleware appelle `next()` pour passer au prochain middleware
+ *
+ * @param {Request} req Objet requête Express contenant les en-têtes HTTP
+ * @param {Response} res Objet réponse Express utilisé pour renvoyer une réponse HTTP
+ * @param {NextFunction} next Fonction permettant de passer au middleware suivant
+ *
+ * @returns {void} On ne renvoie rien
+ *
+ * @throws {JsonWebTokenError} Si le token est invalide avec code 401
+ * @throws {TokenExpiredError} Si le token a expiré avec code 401
+ *
+ */
 
 export const authenticateToken = (
   req: Request,
