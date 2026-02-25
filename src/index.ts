@@ -5,6 +5,8 @@ import cors from 'cors'
 import Routes from './auth/routes/auth.routes'
 import RoutesCards from './Cards/routes/cards.route'
 import RoutesDecks from './decks/routes/decks.route'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerDocument } from './docs'
 
 // Create Express app
 export const app = express()
@@ -14,6 +16,16 @@ app.use(
   cors({
     origin: true, // Autorise toutes les origines
     credentials: true,
+  }),
+)
+
+// Documentation Swagger UI
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'API Documentation',
   }),
 )
 

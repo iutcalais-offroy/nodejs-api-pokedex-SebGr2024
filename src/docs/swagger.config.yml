@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  title: TCG API
+  version: 1.0.0
+  description: API Pokédex avec gestion d'authentification et decks
+  contact:
+    name: Groué Sébastien
+    email: sebgroue@gmail.com
+
+servers:
+  - url: http://localhost:3001
+
+paths:
+  /cards:
+    get:
+      summary: Récupérer toutes les cartes
+      responses:
+        '200':
+          description: Succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Token JWT à obtenir via /auth/sign-in'
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Seb'
+        email:
+          type: string
+          format: email
+          example: 'seb@example.com'
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        hp:
+          type: integer
+        attack:
+          type: integer
+        type:
+          type: string
+        pokedexNumber:
+          type: integer
+        imgUrl:
+          type: string
+          nullable: true
+
+    Deck:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        userId:
+          type: integer
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Message d'erreur"
+
+security:
+  - bearerAuth: []
