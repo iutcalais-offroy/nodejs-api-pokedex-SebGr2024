@@ -7,6 +7,8 @@ import RoutesCards from './Cards/routes/cards.route'
 import RoutesDecks from './decks/routes/decks.route'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerDocument } from './docs'
+import { Server } from 'socket.io'
+import jwt from 'jsonwebtoken'
 
 // Create Express app
 export const app = express()
@@ -46,6 +48,31 @@ app.get('/api/health', (_req, res) => {
 if (require.main === module) {
   // Create HTTP server
   const httpServer = createServer(app)
+
+  const io = new Server(httpServer, {
+    cors: { origin: '*', methods: ['GET', 'POST'] },
+  })
+
+  io.use((socket, next) => {
+    const token = socket.handshake.auth.token
+    if (!token) return next(new Error('Unauthorized: Token manquant'))
+
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET) as {
+        userId: number
+        email: string
+      }
+      socket.data.userId = payload.userId
+      socket.data.email = payload.email
+      next()
+    } catch {
+      next(new Error('Unauthorized: Token invalide'))
+    }
+  })
+
+  io.on('connection', (socket) => {
+    console.log('Nouvelle connexion:', socket.id, 'userId:', socket.data.userId)
+  })
 
   // Start server
   try {
