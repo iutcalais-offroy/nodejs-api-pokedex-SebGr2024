@@ -7,10 +7,16 @@ import RoutesCards from './Cards/routes/cards.route'
 import RoutesDecks from './decks/routes/decks.route'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerDocument } from './docs'
+import { Server } from 'socket.io'
+import jwt from 'jsonwebtoken'
 
 // Create Express app
 export const app = express()
 
+interface UserPayload {
+  userId: number
+  email: string
+}
 // Middlewares
 app.use(
   cors({
@@ -47,6 +53,30 @@ if (require.main === module) {
   // Create HTTP server
   const httpServer = createServer(app)
 
+  const io = new Server(httpServer, {
+    cors: { origin: '*', methods: ['GET', 'POST'] },
+  })
+
+  io.use((socket, next) => {
+    const token = socket.handshake.auth.token
+    if (!token) return next(new Error('Unauthorized: Token manquant'))
+
+    const secret = env.JWT_SECRET || process.env.JWT_SECRET
+
+    if (!secret) {
+      return next(new Error('Server Error: JWT_SECRET manquant'))
+    }
+
+    try {
+      const payload = jwt.verify(token, secret) as unknown as UserPayload
+
+      socket.data.userId = payload.userId
+      socket.data.email = payload.email
+      next()
+    } catch {
+      next(new Error('Unauthorized: Token invalide'))
+    }
+  })
   // Start server
   try {
     httpServer.listen(env.PORT, () => {
