@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express'
 import { swaggerDocument } from './docs'
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
+import { registerRoomHandlers } from './room/room.socket'
 
 // Create Express app
 export const app = express()
@@ -76,6 +77,17 @@ if (require.main === module) {
     } catch {
       next(new Error('Unauthorized: Token invalide'))
     }
+  })
+  io.on('connection', (socket) => {
+    console.log(
+      `🔌 User connected: ${socket.data.email} (ID: ${socket.data.userId})`,
+    )
+
+    registerRoomHandlers(io, socket)
+
+    socket.on('disconnect', () => {
+      console.log(`❌ User disconnected: ${socket.data.email}`)
+    })
   })
   // Start server
   try {
