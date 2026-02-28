@@ -19,6 +19,19 @@ let rooms: Room[] = []
 let nextRoomId = 1
 
 export const RoomService = {
+  /**
+   * Vérifie que le deck :
+   * existe
+   * appartient à l’utilisateur qui est co
+   * contient 10 cartes pas plus pas moins
+   *
+   * @async
+   *
+   * @param userId ID de l'utilisateur
+   * @param deckId ID du deck
+   * @throws Error si le deck est invalide
+   */
+
   async validateDeck(userId: number, deckId: number) {
     const deck = await DeckRepository.findDeckById(deckId)
 
@@ -36,6 +49,17 @@ export const RoomService = {
 
     return deck
   },
+
+  /**
+   * Crée une nouvelle room.
+   *
+   * @async
+   *
+   * @param userId ID de l'host
+   * @param username Nom de l'host
+   * @param deckId Deck sélectionné
+   * @returns La room créée
+   */
 
   async createRoom(
     userId: number,
@@ -59,9 +83,29 @@ export const RoomService = {
     return newRoom
   },
 
+  /**
+   * Retourne les rooms qui sont disponibles.
+   *
+   * @returns Liste des rooms disponibles
+   */
+
   getAvailableRooms(): Room[] {
     return rooms.filter((room) => room.status === 'WAITING')
   },
+
+  /**
+   * Permet à un joueur de rejoindre une room existante.
+   * Et démarre la partie.
+   *
+   * @async
+   *
+   * @param userId ID du joueur
+   * @param username Nom du joueur
+   * @param roomId ID de la room
+   * @param deckId Deck sélectionné
+   * @returns Room mise à jour
+   * @throws Erreur si elle existe pas ou déjà complète
+   */
 
   async joinRoom(
     userId: number,

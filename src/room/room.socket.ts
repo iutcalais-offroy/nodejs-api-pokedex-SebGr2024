@@ -10,6 +10,13 @@ type JoinRoomPayload = {
   deckId: string
 }
 
+/**
+ * Enregistre tous ce qui est liés au matchmaking.
+ *
+ * @param io Instance Socket.io serveur
+ * @param socket Socket du joueur connecté
+ */
+
 export function registerRoomHandlers(io: Server, socket: Socket) {
   socket.on('createRoom', async (data: CreateRoomPayload) => {
     try {
